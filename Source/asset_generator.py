@@ -5,8 +5,22 @@ import sys
 import unreal as ue
 
 
+def get_project_name():
+    # 언리얼 엔진의 프로젝트 경로 가져오기
+    project_dir = unreal.SystemLibrary.get_project_directory()
+
+    # 프로젝트 디렉토리에서 .uproject 파일 찾기
+    for file_name in os.listdir(project_dir):
+        if file_name.endswith('.uproject'):
+            return os.path.splitext(file_name)[0]
+    return None
+
+
 # 프로젝트 명
-project_name = "RottenPotato"
+project_name = get_project_name()
+if project_name is None:
+    ue.log_error("Cannot define project_name.")
+    exit(0)
 
 # 데이터 테이블 에셋 저장 경로
 asset_path = "/Game/Table"
