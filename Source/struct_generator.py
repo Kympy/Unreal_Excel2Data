@@ -2,20 +2,20 @@ import unreal
 import os
 import sys
 import csv
+import unreal as ue
 
-# 현재는 따로 폴더 생성 기능 제공 안함.
 
 # 프로젝트 명
 project_name = "RottenPotato"
 
-# 엑셀 폴더 경로
-excel_folder = unreal.SystemLibrary.get_project_directory() + "Excel"
-
-# CSV 파일이 존재하는 폴더 경로
-csv_folder = unreal.SystemLibrary.get_project_directory() + "CSV"
+# CSV 파일을 보관할 폴더 경로
+csv_folder = ue.SystemLibrary.get_project_directory() + "CSV"
 
 # c++ struct 를 저장할 폴더 경로 ->
-struct_save_folder = unreal.SystemLibrary.get_project_directory() + "Source/" + project_name + "/Public/Table"
+struct_save_folder = ue.SystemLibrary.get_project_directory() + "Source/" + project_name + "/Public/Table"
+
+if not os.path.isdir(struct_save_folder):
+    os.makedirs(struct_save_folder)
 
 
 # 개행 함수
@@ -70,12 +70,8 @@ def get_initial_value(type):
         return ""
 
 
-# Excel -> CSV 함수
-def excel2csv():
-    
-
-
 # 스크립트 작성 함수
+
 def create_struct():
     print("#######   Data Table C++ Struct Generator Started!     #######")
     print("######    Target CSV Folder : " + csv_folder)
@@ -90,7 +86,7 @@ def create_struct():
             csv_file_list.append(file)
 
     if len(csv_file_list) == 0:
-        unreal.log_error("There's no CSV file in folder : " + path.csv_folder)
+        unreal.log_error("There's no CSV file in folder : " + csv_folder)
         sys.exit(0)
 
     print("----------- CSV File List ------------")
@@ -195,6 +191,5 @@ def create_struct():
         # unreal_struct_path = "/Script/" + project_name + "." + file_name
 
 
-# 실행 부분
+# 실행
 create_struct()
-print("********* C++ Struct Generator Closed. **********")

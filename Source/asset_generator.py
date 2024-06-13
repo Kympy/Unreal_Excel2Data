@@ -2,19 +2,23 @@ import unreal
 import os
 import csv
 import sys
+import unreal as ue
 
 
 # 프로젝트 명
 project_name = "RottenPotato"
 
-# 데이터 테이블 클래스
-asset_class = unreal.DataTable
-
 # 데이터 테이블 에셋 저장 경로
 asset_path = "/Game/Table"
 
-# CSV 파일이 존재하는 폴더 경로
-csv_folder = unreal.SystemLibrary.get_project_directory() + "CSV"
+# 데이터 테이블 클래스
+asset_class = ue.DataTable
+
+# CSV 파일을 보관할 폴더 경로
+csv_folder = ue.SystemLibrary.get_project_directory() + "CSV"
+
+if not os.path.isdir(csv_folder):
+    os.makedirs(csv_folder)
 
 
 # struct_path : ex) "/Script/RottenPotato.TestTable"
@@ -30,10 +34,10 @@ def create_data_table_asset(csv_path):
     print("--------- Creating data table asset..." + " Struct path : " + unreal_struct_path + " ----------")
     print("-")
     # 데이터 테이블 구조체
-    asset_factory = unreal.DataTableFactory()
-    asset_factory.struct = unreal.load_object(None, unreal_struct_path)
+    asset_factory = ue.DataTableFactory()
+    asset_factory.struct = ue.load_object(None, unreal_struct_path)
     if asset_factory.struct is None:
-        unreal.log_error("Asset factory struct is none.")
+        ue.log_error("Asset factory struct is none.")
         return
 
     # CSV 를 추출해서 순 데이터만 존재하는 임시파일 생성
@@ -48,7 +52,7 @@ def create_data_table_asset(csv_path):
                 id_row_index = index
 
         if id_row_index == -1:
-            unreal.log_error("Cannot found Id column.")
+            ue.log_error("Cannot found Id column.")
             return
 
     raw_data_rows = []
@@ -56,7 +60,7 @@ def create_data_table_asset(csv_path):
         if index >= id_row_index:
             raw_data_rows.append(row)
 
-    temp_csv_path = unreal.SystemLibrary.get_project_directory() + "/Temp/Temp_" + file_name + ".csv"
+    temp_csv_path = csv_folder + "/Temp/Temp_" + file_name + ".csv"
     
     # 무시할 열 인덱스 찾기 -> # 붙은거
     ignore_column_index = []
@@ -76,7 +80,7 @@ def create_data_table_asset(csv_path):
                     temp_csv.write(",")
             temp_csv.write("\n")
 
-    csv_factory = unreal.CSVImportFactory()
+    csv_factory = ue.CSVImportFactory()
     csv_factory.automated_import_settings.import_row_struct = asset_factory.struct
 
     task = unreal.AssetImportTask()
@@ -88,14 +92,14 @@ def create_data_table_asset(csv_path):
     task.save = True
     task.factory = csv_factory
 
-    unreal.AssetToolsHelpers.get_asset_tools().import_asset_tasks([task])
+    ue.AssetToolsHelpers.get_asset_tools().import_asset_tasks([task])
 
-    #try:
-        #os.remove(temp_csv_path)
-    #except FileNotFoundError:
-        #return
-    #except Exception as e:
-        #unreal.log_error(e)
+    try:
+        os.remove(temp_csv_path)
+    except FileNotFoundError:
+        return
+    except Exception as e:
+        ue.log_error(e)
 
 
 # 시작 함수
@@ -113,7 +117,7 @@ def start():
             csv_file_list.append(file)
 
     if len(csv_file_list) == 0:
-        unreal.log_error("There's no CSV file in folder : " + csv_folder)
+        ue.log_error("There's no CSV file in folder : " + csv_folder)
         sys.exit(0)
 
     print("----------- CSV File List ------------")
