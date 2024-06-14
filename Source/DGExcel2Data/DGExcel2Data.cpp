@@ -148,6 +148,10 @@ void FDGExcel2Data::MakeDataTableStruct()
 {
 	// TSharedRef<class FGlobalTabmanager> TabManager = FGlobalTabmanager::Get();
 	// TabManager->TryInvokeTab(FTabId("Custom Tools Tab"));
+	UE_LOG(LogTemp, Log, TEXT(" "))
+	UE_LOG(LogTemp, Log, TEXT("------------------------------"))
+	UE_LOG(LogTemp, Log, TEXT("----- [DGExcel2Data] Make Excel To CSV AND C++ STRUCT -----"))
+	UE_LOG(LogTemp, Log, TEXT(" "))
 	
 	FString PythonScriptPath = FPaths::Combine(FPaths::ProjectContentDir(), "Python", "DGExcel2Data", "excel2csv.py");
 	PythonScriptPath = FPaths::ConvertRelativePathToFull(PythonScriptPath);
@@ -158,18 +162,35 @@ void FDGExcel2Data::MakeDataTableStruct()
 	PythonScriptPath = FPaths::ConvertRelativePathToFull(PythonScriptPath);
 	PythonScriptPath.InsertAt(0, "py ");
 	GEngine->Exec(nullptr, *PythonScriptPath);
+		
+	UE_LOG(LogTemp, Log, TEXT(" "))
+	UE_LOG(LogTemp, Log, TEXT(" "))
+	UE_LOG(LogTemp, Log, TEXT("------------------------------"))
 }
 
 void FDGExcel2Data::MakeDataTableAsset()
 {
+	UE_LOG(LogTemp, Log, TEXT(" "))
+	UE_LOG(LogTemp, Log, TEXT("------------------------------"))
+	UE_LOG(LogTemp, Log, TEXT("----- [DGExcel2Data] Make Data Table Asset -----"))
+	UE_LOG(LogTemp, Log, TEXT(" "))
+	
 	FString PythonScriptPath = FPaths::Combine(FPaths::ProjectContentDir(), "Python", "DGExcel2Data", "asset_generator.py");
 	PythonScriptPath = FPaths::ConvertRelativePathToFull(PythonScriptPath);
 	PythonScriptPath.InsertAt(0, "py ");
 	GEngine->Exec(nullptr, *PythonScriptPath);
+	
+	UE_LOG(LogTemp, Log, TEXT(" "))
+	UE_LOG(LogTemp, Log, TEXT(" "))
+	UE_LOG(LogTemp, Log, TEXT("------------------------------"))
 }
 
 void FDGExcel2Data::CreateFolders()
 {
+	UE_LOG(LogTemp, Log, TEXT(" "))
+	UE_LOG(LogTemp, Log, TEXT("------------------------------"))
+	UE_LOG(LogTemp, Log, TEXT("----- [DGExcel2Data] Create Folders -----"))
+	UE_LOG(LogTemp, Log, TEXT(" "))
 	FString ExcelFolder = FPaths::Combine(FPaths::ProjectDir(), "Excel");
 	if (FPaths::DirectoryExists(ExcelFolder) == false)
 	{
@@ -187,5 +208,8 @@ void FDGExcel2Data::CreateFolders()
 	{
 		UE_LOG(LogTemp, Log, TEXT("Excel folder is already exists."))
 	}
+	UE_LOG(LogTemp, Log, TEXT(" "))
+	UE_LOG(LogTemp, Log, TEXT(" "))
+	UE_LOG(LogTemp, Log, TEXT("------------------------------"))
 }
 

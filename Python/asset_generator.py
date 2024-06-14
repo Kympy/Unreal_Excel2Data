@@ -45,8 +45,8 @@ def create_data_table_asset(csv_path):
     # base struct 스크립트 경로
     unreal_struct_path = "/Script/" + project_name + "." + file_name + "Data"
 
-    print("--------- Creating data table asset..." + " Struct path : " + unreal_struct_path + " ----------")
-    print("-")
+    ue.log("--------- Creating data table asset..." + " Struct path : " + unreal_struct_path + " ----------")
+    ue.log(".")
     # 데이터 테이블 구조체
     asset_factory = ue.DataTableFactory()
     asset_factory.struct = ue.load_object(None, unreal_struct_path)
@@ -74,15 +74,19 @@ def create_data_table_asset(csv_path):
         if index >= id_row_index:
             raw_data_rows.append(row)
 
-    temp_csv_path = csv_folder + "/Temp/Temp_" + file_name + ".csv"
-    
+    temp_folder = os.path.join(csv_folder, "Temp")
+    if not os.path.isdir(temp_folder):
+        os.makedirs(temp_folder)
+
+    temp_csv_path = os.path.join(temp_folder, "Temp_" + file_name + ".csv")
+
     # 무시할 열 인덱스 찾기 -> # 붙은거
     ignore_column_index = []
     for index, column in enumerate(raw_data_rows[0]):
         if str(column).find("#") >= 0:
             ignore_column_index.append(index)
-            print("Ignore line : " + str(index))
-    
+            ue.log("Ignore line : " + str(index))
+
     with open(temp_csv_path, 'w', encoding='utf-8') as temp_csv:
         for row in raw_data_rows:
             for index, data in enumerate(row):
@@ -107,7 +111,11 @@ def create_data_table_asset(csv_path):
     task.factory = csv_factory
 
     ue.AssetToolsHelpers.get_asset_tools().import_asset_tasks([task])
-
+    ue.log("-SUCCESS")
+    ue.log(".")
+    ue.log(".")
+    ue.log(".")
+    
     try:
         os.remove(temp_csv_path)
     except FileNotFoundError:
@@ -118,9 +126,9 @@ def create_data_table_asset(csv_path):
 
 # 시작 함수
 def start():
-    print("#######   Data Table Asset Generator Started!     #######")
-    print("######    Target CSV Folder : " + csv_folder)
-    print("-")
+    ue.log("#######   Data Table Asset Generator Started!     #######")
+    ue.log("######    Target CSV Folder : " + csv_folder)
+    ue.log("-")
     # csv_folder 내부의 모든 파일 리스트 검출
     file_list = os.listdir(csv_folder)
 
@@ -134,18 +142,19 @@ def start():
         ue.log_error("There's no CSV file in folder : " + csv_folder)
         sys.exit(0)
 
-    print("----------- CSV File List ------------")
-    print("-")
+    ue.log("----------- CSV File List ------------")
+    ue.log("-")
     # 반복문 시작 : 하나 씩 변환 시작
     index = 1
     for file in csv_file_list:
-        print("(" + str(index) + ") " + file)
+        ue.log("(" + str(index) + ") " + file)
         index += 1
 
-    print("-")
+    ue.log(".")
     for file in csv_file_list:
-        print("-")
-        print("::::::::::::: Start making [" + file + "] ::::::::::::::")
+        ue.log(".")
+        ue.log(".")
+        ue.log("::::::::::::: Start making [" + file + "] ::::::::::::::")
         # csv 파일 경로 추출
         csv_file_path = os.path.join(csv_folder, file)
         create_data_table_asset(csv_file_path)
@@ -153,4 +162,4 @@ def start():
 
 # 실행 부분
 start()
-print("********* Asset Generator Closed. **********")
+ue.log("********* Asset Generator Finished. **********")

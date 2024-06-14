@@ -215,3 +215,5 @@ def create_struct():
 
 # 실행
 create_struct()
+
+print("\t** Struct Generator Finished. **")
