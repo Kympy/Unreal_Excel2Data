@@ -24,11 +24,11 @@ IMPLEMENT_MODULE(FDGExcel2Data, DGExcel2Data)void FDGExcel2Data::StartupModule()
 FExecuteAction::CreateRaw(this, &FDGExcel2Data::MakeDataTableStruct), 
 		FCanExecuteAction()
 	);
-	GenerateDataTableCommand->MapAction(
-		FDataTableMakerCommand::Get().Cmd_MakeAsset,
-		FExecuteAction::CreateRaw(this, &FDGExcel2Data::MakeDataTableAsset),
-		FCanExecuteAction()
-	);
+	// GenerateDataTableCommand->MapAction(
+	// 	FDataTableMakerCommand::Get().Cmd_MakeAsset,
+	// 	FExecuteAction::CreateRaw(this, &FDGExcel2Data::MakeDataTableAsset),
+	// 	FCanExecuteAction()
+	// );
 	GenerateDataTableCommand->MapAction(
 		FDataTableMakerCommand::Get().Cmd_CreateFolder,
 		FExecuteAction::CreateRaw(this, &FDGExcel2Data::CreateFolders),
@@ -110,17 +110,17 @@ void FDGExcel2Data::FillMenu(FMenuBuilder& MenuBuilder)
 		MenuBuilder.AddMenuEntry(
 			FDataTableMakerCommand::Get().Cmd_MakeStruct,
 			NAME_None,
-			FText::FromString("1. Make Data Table C++ Struct"),
-			FText::FromString("Make data table c++ struct. *FIRST*"),
+			FText::FromString("Make Data Table"),
+			FText::FromString("Make data table"),
 			FSlateIcon()
 		);
-		MenuBuilder.AddMenuEntry(
-			FDataTableMakerCommand::Get().Cmd_MakeAsset,
-			NAME_None,
-			FText::FromString("2. Make Data Table Asset"),
-			FText::FromString("Make data table asset from struct."),
-			FSlateIcon()
-		);
+		// MenuBuilder.AddMenuEntry(
+		// 	FDataTableMakerCommand::Get().Cmd_MakeAsset,
+		// 	NAME_None,
+		// 	FText::FromString("2. Make Data Table Asset"),
+		// 	FText::FromString("Make data table asset from struct."),
+		// 	FSlateIcon()
+		// );
 		MenuBuilder.AddMenuEntry(
 			FDataTableMakerCommand::Get().Cmd_CreateFolder,
 			NAME_None,
@@ -158,7 +158,7 @@ void FDGExcel2Data::MakeDataTableStruct()
 	PythonScriptPath.InsertAt(0, "py ");
 	GEngine->Exec(nullptr, *PythonScriptPath);
 	
-	PythonScriptPath = FPaths::Combine(FPaths::ProjectContentDir(), "Python", "DGExcel2Data", "struct_generator.py");
+	PythonScriptPath = FPaths::Combine(FPaths::ProjectContentDir(), "Python", "DGExcel2Data", "csv2unreal.py");
 	PythonScriptPath = FPaths::ConvertRelativePathToFull(PythonScriptPath);
 	PythonScriptPath.InsertAt(0, "py ");
 	GEngine->Exec(nullptr, *PythonScriptPath);
@@ -168,22 +168,22 @@ void FDGExcel2Data::MakeDataTableStruct()
 	UE_LOG(LogTemp, Log, TEXT("------------------------------"))
 }
 
-void FDGExcel2Data::MakeDataTableAsset()
-{
-	UE_LOG(LogTemp, Log, TEXT(" "))
-	UE_LOG(LogTemp, Log, TEXT("------------------------------"))
-	UE_LOG(LogTemp, Log, TEXT("----- [DGExcel2Data] Make Data Table Asset -----"))
-	UE_LOG(LogTemp, Log, TEXT(" "))
-	
-	FString PythonScriptPath = FPaths::Combine(FPaths::ProjectContentDir(), "Python", "DGExcel2Data", "asset_generator.py");
-	PythonScriptPath = FPaths::ConvertRelativePathToFull(PythonScriptPath);
-	PythonScriptPath.InsertAt(0, "py ");
-	GEngine->Exec(nullptr, *PythonScriptPath);
-	
-	UE_LOG(LogTemp, Log, TEXT(" "))
-	UE_LOG(LogTemp, Log, TEXT(" "))
-	UE_LOG(LogTemp, Log, TEXT("------------------------------"))
-}
+// void FDGExcel2Data::MakeDataTableAsset()
+// {
+// 	UE_LOG(LogTemp, Log, TEXT(" "))
+// 	UE_LOG(LogTemp, Log, TEXT("------------------------------"))
+// 	UE_LOG(LogTemp, Log, TEXT("----- [DGExcel2Data] Make Data Table Asset -----"))
+// 	UE_LOG(LogTemp, Log, TEXT(" "))
+// 	
+// 	FString PythonScriptPath = FPaths::Combine(FPaths::ProjectContentDir(), "Python", "DGExcel2Data", "asset_generator.py");
+// 	PythonScriptPath = FPaths::ConvertRelativePathToFull(PythonScriptPath);
+// 	PythonScriptPath.InsertAt(0, "py ");
+// 	GEngine->Exec(nullptr, *PythonScriptPath);
+// 	
+// 	UE_LOG(LogTemp, Log, TEXT(" "))
+// 	UE_LOG(LogTemp, Log, TEXT(" "))
+// 	UE_LOG(LogTemp, Log, TEXT("------------------------------"))
+// }
 
 void FDGExcel2Data::CreateFolders()
 {
