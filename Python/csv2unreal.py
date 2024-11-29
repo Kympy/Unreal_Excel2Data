@@ -23,10 +23,12 @@ if project_name is None:
     exit(0)
 
 # CSV 파일을 보관할 폴더 경로
-csv_folder = ue.SystemLibrary.get_project_directory() + "CSV"
+csv_folder = ue.SystemLibrary.get_project_directory() + "Temp"
 
 # c++ struct 를 저장할 폴더 경로 ->
 struct_save_folder = os.path.join(ue.SystemLibrary.get_project_directory(), "Source", project_name, "Public", "Table")
+
+raw_csv_path = ue.SystemLibrary.get_project_content_directory() + "CSV"
 
 if not os.path.isdir(struct_save_folder):
     os.makedirs(struct_save_folder)
@@ -123,9 +125,10 @@ def create_struct():
         rows = []
         # 파일 열고 행 별로 rows 에 담는다
         with open(csv_file_path, 'r', encoding='utf-8') as csvfile:
-            csv_reader = csv.reader(csvfile)
+            csv_reader = csv.reader(csvfile, quotechar='"', delimiter=',')
             for row in csv_reader:
                 rows.append(row)
+                # print(row)
 
         # 행이 아무것도 없다면 종료
         if len(rows) == 0:
@@ -143,10 +146,11 @@ def create_struct():
             continue
 
         # 먼저 C++ 부터 작성
-        print("----------   Writing C++ Struct row table... RowCount : " + str(len(rows) - column_name_row_index) + " ... ", end="")
+        print("----------   Writing C++ Struct row table And Raw CSV... RowCount : " + str(len(rows) - column_name_row_index) + " ... ", end="")
 
         type_name_list = []
         column_name_list = []
+        ignore_line_index = []
         # 타입 이름과 컬럼 이름 수집
         column_name_row = rows[column_name_row_index]
         for index, column_name in enumerate(column_name_row):
@@ -157,20 +161,55 @@ def create_struct():
                 type_row = rows[column_name_row_index - 1]
                 type_name_list.append(type_row[index])
                 column_name_list.append(column_name)
+            else:
+                ignore_line_index.append(index)
 
         # 타입 갯수와 칼럼 열 갯수가 다르면 경고 후 스킵
         if len(type_name_list) != len(column_name_list):
             print("Type name count and column name count is not correct : " + len(type_name_list) + "/" + len(
                 column_name_list))
             continue
+        
         # 파일명 추출
         file_name = os.path.basename(csv_file_path)
         file_name = str(file_name).split('.')[0]
+
+        # with open(os.path.join(raw_csv_path, os.path.basename(csv_file_path)), 'w', encoding='utf-8') as raw_csv:
+        #     writer = csv.writer(raw_csv, quoting=csv.QUOTE_ALL)
+        #     for row_index, row in enumerate(rows):
+        #         if row_index < column_name_row_index:
+        #             continue
+        #         for index, data in enumerate(row):
+        #             # 무시할 열이면 스킵
+        #             if index in ignore_line_index:
+        #                 continue
+        #             writer.write()
+        
+        # 날것의 CSV 만 리소스로 저장
+        with open(os.path.join(raw_csv_path, os.path.basename(csv_file_path)), 'w', encoding='utf-8') as raw_csv:
+            # writer = csv.writer(raw_csv, quoting=csv.QUOTE_ALL)
+            for row_index, row in enumerate(rows):
+                if row_index < column_name_row_index:
+                    continue
+                for index, data in enumerate(row):
+                    # 무시할 열이면 스킵
+                    if index in ignore_line_index:
+                        continue
+                    # print(f"Index: {index}, Data: {data}")
+                    # 빈셀 버그 제거
+                    if data == "" or data is None:
+                        continue
+                    raw_csv.write("\"" + data + "\"")
+                    
+                    # 마지막이 아니라면 콤마
+                    if index != len(row) - 1:
+                        # print("Comma" + str(index) + "Len - " + str(len(row) - 1))
+                        raw_csv.write(",")
+                raw_csv.write("\n")
         
         # 세이브 경로
         struct_file_path = os.path.join(struct_save_folder, "F" + file_name + "Data.h")  
         # 폴더 체크
-        
         
         # 파일 작성 시작
         with open(struct_save_folder + "/F" + file_name + "Data.h", 'w') as c_file:
